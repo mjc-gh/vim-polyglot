@@ -132,6 +132,14 @@ function GetRustIndent(lnum)
         let prevline = s:get_line_trimmed(prevlinenum)
     endwhile
 
+    " Handle function signatures like:
+    " fn foo(
+    "   bar: Baz,
+    " ) -> () {
+    if line =~ '^\s*) ->'
+      return indent(prevnonblank(a:lnum - 1)) - 4
+    endif
+
     " Handle where clauses nicely: subsequent values should line up nicely.
     if prevline[len(prevline) - 1] ==# ","
                 \ && prevline =~# '^\s*where\s'
